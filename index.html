@@ -141,28 +141,42 @@ document.getElementById("app").innerHTML=`
 }
 
 function startQuiz(num){
-totalQuestions=num;
-currentQuestion=0;
-score=0;
-questions=[];
-for(let i=0;i<num;i++){
-let randomQ=questionBank[level][Math.floor(Math.random()*questionBank[level].length)];
-questions.push(randomQ);
-}
-showQuestion();
-}
+  totalQuestions = num;
+  currentQuestion = 0;
+  score = 0;
+  
+  // создаём копию массива вопросов выбранного уровня
+  const pool = [...questionBank[level]];
+  
+  // перемешиваем массив (Fisher-Yates shuffle)
+  for(let i = pool.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  
+  // берём первые N вопросов
+  questions = pool.slice(0, num);
+  
+  showQuestion();
+  }
 
 function startTimer(){
-timeLeft=60;
-document.getElementById("timer").textContent=`Vaqt: ${timeLeft}s`;
-timer=setInterval(()=>{
-timeLeft--;
-document.getElementById("timer").textContent=`Vaqt: ${timeLeft}s`;
-if(timeLeft<=0){
-clearInterval(timer);
-nextQuestion();
-}
-},1000);
+  clearInterval(timer); // останавливаем старый таймер, если есть
+  timeLeft = 60;
+  const display = document.getElementById("timer");
+  display.textContent = `Vaqt: ${timeLeft}s`;
+
+  const start = Date.now(); // точное время старта
+  timer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - start) / 1000); // сколько секунд прошло
+    const remaining = 60 - elapsed;
+    display.textContent = `Vaqt: ${remaining}s`;
+
+    if(remaining <= 0){
+      clearInterval(timer);
+      nextQuestion();
+    }
+  }, 200); // обновляем каждые 0.2 сек для плавности
 }
 
 function showQuestion(){
