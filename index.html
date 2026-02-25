@@ -1,342 +1,95 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IQ Test Platform</title>
-
-<!-- ===== Стилизация (CSS) ===== -->
-<style>
-/* ===== DARK INTJ STYLE ===== */
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #0d0b1f;
-  color: #e0d9ff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  transition: background 0.3s, color 0.3s;
-}
-
-.container {
-  background: #1a142f;
-  padding: 30px;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 700px;
-  box-shadow: 0 0 20px #8a2be250;
-  text-align: center;
-}
-
-h1, h2 {
-  margin-bottom: 20px;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 10px;
-  background: #8a2be2;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-button:hover {
-  box-shadow: 0 0 10px #8a2be2;
-  transform: scale(1.03);
-}
-
-.progress {
-  height: 12px;
-  background: #0d0b1f;
-  border-radius: 6px;
-  margin: 15px 0;
-}
-
-.progress-bar {
-  height: 12px;
-  background: #8a2be2;
-  border-radius: 6px;
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-.answer-correct {
-  background: #00ff88 !important;
-  color: black;
-  animation: flash 0.5s;
-}
-
-.answer-wrong {
-  background: #ff0044 !important;
-  color: white;
-  animation: shake 0.5s;
-}
-
-@keyframes flash {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
-}
-
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  50% { transform: translateX(5px); }
-  75% { transform: translateX(-5px); }
-  100% { transform: translateX(0); }
-}
-
-.timer {
-  text-align: center;
-  font-size: 18px;
-  margin: 10px 0;
-  font-weight: bold;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ Test Application</title>
+    <style>
+        body {
+            background-color: #300000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            animation: fadeIn 1s;
+        }
+        h1 { margin-top: 20px; }
+        .difficulty { margin: 20px; }
+        .progress { height: 20px; background: #600000; }
+        .progress-bar {
+            height: 100%;
+            background: #ff0000;
+            width: 0;
+        }
+        .score { font-size: 24px; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-  <div class="container" id="app">
-    <h1>IQ Test Platform</h1>
-    <button onclick="selectLevel('easy')">Easy</button>
-    <button onclick="selectLevel('medium')">Medium</button>
-    <button onclick="selectLevel('hard')">Hard</button>
-  </div>
-
-  <!-- JS подключим в Части 2 -->
+    <h1>IQ Test Application</h1>
+    <div class="difficulty">
+        <label for="difficulty">Select Difficulty:</label>
+        <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+    </div>
+    <div>
+        <label for="questionCount">Question Count:</label>
+        <input type="number" id="questionCount" value="10" min="1" max="50">
+    </div>
+    <div>
+        <label for="timer">Timer Option:</label>
+        <select id="timer">
+            <option value="none">None</option>
+            <option value="30">30 seconds</option>
+            <option value="60">1 minute</option>
+            <option value="120">2 minutes</option>
+        </select>
+    </div>
+    <button id="startButton">Start Test</button>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="score" id="scoreDisplay">Score: 0</div>
+    <script>
+        document.getElementById('startButton').addEventListener('click', startTest);
+        function startTest() {
+            // Initialize test settings
+            const difficulty = document.getElementById('difficulty').value;
+            const questionCount = document.getElementById('questionCount').value;
+            const timer = document.getElementById('timer').value;
+            let score = 0;
+            let currentQuestion = 0;
+            let totalQuestions = parseInt(questionCount);
+            // Start timer if selected
+            if (timer !== 'none') {
+                setTimeout(() => {
+                    alert('Time is up! Your score is: ' + score);
+                }, timer * 1000);
+            }
+            // Simulate questions
+            const interval = setInterval(() => {
+                if (currentQuestion < totalQuestions) {
+                    // Simulate displaying a question and score update
+                    score += Math.floor(Math.random() * 10); // Random score increment for demo
+                    currentQuestion++;
+                    updateScore();
+                    updateProgress();
+                } else {
+                    clearInterval(interval);
+                    alert('Test complete! Your final score is: ' + score);
+                }
+            }, 1000);
+            function updateScore() {
+                document.getElementById('scoreDisplay').innerText = 'Score: ' + score;
+            }
+            function updateProgress() {
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = (currentQuestion / totalQuestions) * 100 + '%';
+            }
+        }
+    </script>
 </body>
 </html>
-
-<script>
-// ===== Переменные =====
-let level = "";
-let totalQuestions = 0;
-let perQuestionTime = 30; // время на вопрос по умолчанию
-let currentQuestion = 0;
-let score = 0;
-let questions = [];
-let timer;
-
-// ===== Банк вопросов (пример, можно расширять) =====
-const questionBank = {
-  easy:[
-    {q:"2,4,6,8,?", a:["9","10","11","12"], c:1},
-    {q:"A,C,E,G,?", a:["H","I","J","K"], c:1},
-    {q:"1,1,2,2,3,3,?", a:["3","4","5","6"], c:1},
-  ],
-  medium:[
-    {q:"3,6,12,24,?", a:["36","48","60","72"], c:1},
-    {q:"7,14,28,56,?", a:["84","98","112","124"], c:2},
-  ],
-  hard:[
-    {q:"2,3,5,9,17,?", a:["25","33","31","35"], c:1},
-    {q:"8,4,12,6,18,?", a:["9","12","10","8"], c:0},
-  ]
-};
-
-// ===== Функция выбора уровня =====
-function selectLevel(lvl){
-  level = lvl;
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <h2>Savol sonini tanlang</h2>
-    <button onclick="chooseQuestionCount(10)">10 Savol</button>
-    <button onclick="chooseQuestionCount(20)">20 Savol</button>
-    <button onclick="chooseQuestionCount(30)">30 Savol</button>
-  `;
-}
-
-// ===== Функция выбора количества вопросов =====
-function chooseQuestionCount(num){
-  totalQuestions = num;
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <h2>Vaqtni tanlang (sekund)</h2>
-    <button onclick="startQuizWithTimer(15)">15</button>
-    <button onclick="startQuizWithTimer(30)">30</button>
-    <button onclick="startQuizWithTimer(45)">45</button>
-    <button onclick="startQuizWithTimer(60)">60</button>
-  `;
-}
-
-// ===== Функция старта квиза с выбранным временем =====
-function startQuizWithTimer(seconds){
-  perQuestionTime = seconds;
-  score = 0;
-  currentQuestion = 0;
-  // Берём случайные вопросы из банка выбранного уровня
-  questions = [...questionBank[level]]; // пока просто копия всех вопросов
-  showQuestionScreen();
-}
-
-// ===== Показ экрана вопроса и таймера =====
-function showQuestionScreen(){
-  const q = questions[currentQuestion];
-  const app = document.getElementById("app");
-
-  app.innerHTML = `
-    <h2 id="question">${q.q}</h2>
-    <div id="answers">
-      <button id="opt0"></button>
-      <button id="opt1"></button>
-      <button id="opt2"></button>
-      <button id="opt3"></button>
-    </div>
-    <button id="nextBtn" onclick="nextQuestion()" style="display:none">Next</button>
-    <div class="timer" id="timer"></div>
-    <div class="progress"><div class="progress-bar" id="progress"></div></div>
-  `;
-
-  // Подставляем ответы на кнопки
-  q.a.forEach((opt, i) => {
-    const btn = document.getElementById(`opt${i}`);
-    btn.textContent = opt;
-    // Пока обработчик пустой – проверку подключим в ЧАСТИ 3
-    btn.onclick = () => showNextButton();
-  });
-
-  updateProgress();
-  startTimer();
-}
-
-// ===== Показ кнопки Next при выборе ответа или таймере =====
-function showNextButton(){
-  document.getElementById("nextBtn").style.display = "block";
-  clearInterval(timer); // останавливаем таймер после выбора
-}
-
-// ===== Таймер =====
-function startTimer(){
-  clearInterval(timer);
-  let timeLeft = perQuestionTime;
-  const display = document.getElementById("timer");
-  display.textContent = `Vaqt: ${timeLeft}s`;
-
-  timer = setInterval(() => {
-    timeLeft--;
-    display.textContent = `Vaqt: ${timeLeft}s`;
-    if(timeLeft <= 0){
-      clearInterval(timer);
-      document.getElementById("nextBtn").style.display = "block";
-    }
-  }, 1000);
-}
-
-// ===== Функция перехода к следующему вопросу =====
-function nextQuestion(){
-  currentQuestion++;
-  if(currentQuestion >= totalQuestions){
-    showResultScreen();
-  } else {
-    showQuestionScreen();
-  }
-}
-
-// ===== Обновление прогресс-бара =====
-function updateProgress(){
-  const progressPercent = (currentQuestion / totalQuestions) * 100;
-  document.getElementById("progress").style.width = progressPercent + "%";
-}
-
-// ===== Показ экрана результата (пока без подсчета правильных ответов) =====
-function showResultScreen(){
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <h2>Natija</h2>
-    <p>Siz ${totalQuestions} ta savoldan ${score} tasiga to‘g‘ri javob berdingiz.</p>
-    <button onclick="restartQuiz()">Qayta boshlash</button>
-  `;
-}
-
-// ===== Перезапуск квиза =====
-function restartQuiz(){
-  level = "";
-  totalQuestions = 0;
-  currentQuestion = 0;
-  score = 0;
-  questions = [];
-  document.getElementById("app").innerHTML=`
-    <h1>IQ Test Platform</h1>
-    <button onclick="selectLevel('easy')">Easy</button>
-    <button onclick="selectLevel('medium')">Medium</button>
-    <button onclick="selectLevel('hard')">Hard</button>
-  `;
-}
-  </script>
-
-<script>
-// ===== Проверка выбранного ответа =====
-function checkAnswer(index){
-  clearInterval(timer);
-  const q = questions[currentQuestion];
-  const btn = document.getElementById(`opt${index}`);
-  const correctBtn = document.getElementById(`opt${q.c}`);
-
-  if(index === q.c){
-    btn.classList.add('answer-correct');
-    score++;
-  } else {
-    btn.classList.add('answer-wrong');
-    correctBtn.classList.add('answer-correct');
-  }
-
-  // блокируем все кнопки после выбора
-  q.a.forEach((_, i) => {
-    document.getElementById(`opt${i}`).disabled = true;
-  });
-
-  // показываем кнопку Next с небольшой задержкой (например 800 мс)
-  setTimeout(() => {
-    document.getElementById("nextBtn").style.display = "block";
-  }, 800); // 800 миллисекунд = 0.8 секунды
-}
-
-// ===== Подключение проверки ответов к экрану вопроса =====
-// Инициализация экрана один раз
-function initQuizScreen() {
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <h2 id="question"></h2>
-    <div id="answers">
-      <button id="opt0"></button>
-      <button id="opt1"></button>
-      <button id="opt2"></button>
-      <button id="opt3"></button>
-    </div>
-    <button id="nextBtn" style="display:none">Next</button>
-    <div class="timer" id="timer"></div>
-    <div class="progress"><div class="progress-bar" id="progress"></div></div>
-  `;
-
-  // Подключаем кнопку Next один раз
-  document.getElementById("nextBtn").onclick = nextQuestion;
-
-  // Подключаем кнопки ответов один раз
-  for (let i = 0; i < 4; i++) {
-    document.getElementById(`opt${i}`).onclick = () => checkAnswer(i);
-  }
-}
-
-// Показ нового вопроса
-function showQuestionScreen(){
-  const q = questions[currentQuestion];
-
-  // Меняем текст вопроса и ответов
-  document.getElementById("question").textContent = q.q;
-  q.a.forEach((opt, i) => {
-    const btn = document.getElementById(`opt${i}`);
-    btn.textContent = opt;
-    btn.disabled = false;
-    btn.className = ""; // сброс стиля
-  });
-
-  document.getElementById("nextBtn").style.display = "none";
-  updateProgress();
-  startTimer();
-}
