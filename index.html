@@ -273,28 +273,28 @@ function restartQuiz(){
 <script>
 // ===== Проверка выбранного ответа =====
 function checkAnswer(index){
-  clearInterval(timer); // останавливаем таймер
+  clearInterval(timer);
   const q = questions[currentQuestion];
   const btn = document.getElementById(`opt${index}`);
   const correctBtn = document.getElementById(`opt${q.c}`);
 
   if(index === q.c){
-    // правильный ответ
     btn.classList.add('answer-correct');
     score++;
   } else {
-    // неправильный ответ
     btn.classList.add('answer-wrong');
     correctBtn.classList.add('answer-correct');
   }
 
-  // Показываем кнопку Next после ответа
-  document.getElementById("nextBtn").style.display = "block";
-
-  // Отключаем повторное нажатие на ответы
+  // блокируем все кнопки после выбора
   q.a.forEach((_, i) => {
     document.getElementById(`opt${i}`).disabled = true;
   });
+
+  // показываем кнопку Next с небольшой задержкой (например 800 мс)
+  setTimeout(() => {
+    document.getElementById("nextBtn").style.display = "block";
+  }, 800); // 800 миллисекунд = 0.8 секунды
 }
 
 // ===== Подключение проверки ответов к экрану вопроса =====
