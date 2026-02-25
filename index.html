@@ -193,18 +193,28 @@ buttons[q.c].classList.add('answer-correct');
 setTimeout(nextQuestion,1000);
 }
 
-function nextQuestion(){
-currentQuestion++;
-showQuestion();
+function showResult(){
+  document.getElementById("app").innerHTML=`
+    <h2>Natija</h2>
+    <p>Siz ${totalQuestions} ta savoldan ${score} tasiga to‘g‘ri javob berdingiz.</p>
+    <button onclick="restartQuiz()">Qayta boshlash</button>
+  `;
 }
 
-function showResult(){
-document.getElementById("app").innerHTML=`
-<h2>Natija</h2>
-<p>Siz ${totalQuestions} ta savoldan ${score} tasiga to‘g‘ri javob berdingiz.</p>
-<button onclick="location.reload()">Qayta boshlash</button>
-`;
+function restartQuiz(){
+  level=""; 
+  totalQuestions=0;
+  currentQuestion=0;
+  score=0;
+  questions=[];
+  document.getElementById("app").innerHTML=`
+    <h1>IQ Test Platform</h1>
+    <button onclick="selectLevel('easy')">easy</button>
+    <button onclick="selectLevel('medium')">medium</button>
+    <button onclick="selectLevel('hard')">hard</button>
+  `;
 }
+  
 </script>
 </body>
 </html>
