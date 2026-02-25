@@ -100,7 +100,7 @@ button:hover {
   <div class="timer" id="timer"></div>
   <div class="progress"><div class="progress-bar" id="progress"></div></div>
 </div>
-
+  
 <script>
 let level="";
 let totalQuestions=0;
@@ -157,21 +157,32 @@ function chooseQuestionCount(num){
   `;
 }
 
-function startQuizWithTimer(time){
-  perQuestionTime = time;
-  currentQuestion = 0;
-  score = 0;
+function showQuestion() {
+  if(currentQuestion >= totalQuestions){ showResult(); return; }
+  clearInterval(timer);
+  const q = questions[currentQuestion];
 
-  // уникальные вопросы без повторов
-  const pool = [...questionBank[level]];
-  for(let i = pool.length - 1; i > 0; i--){
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+  // Вопрос
+  document.getElementById("question").textContent = q.q;
+
+  // Ответы
+  q.a.forEach((opt, i) => {
+    const btn = document.getElementById(`opt${i}`);
+    btn.textContent = opt;          // сюда пишем текст ответа
+    btn.onclick = () => checkAnswer(i);  // назначаем обработчик
+    btn.className = "";             // сброс стиля (правильный/неправильный)
+  });
+
+  // Скрываем кнопку Next до ответа
+  document.getElementById("nextBtn").style.display = "none";
+
+  // Прогресс-бар
+  const progressPercent = (currentQuestion / totalQuestions) * 100;
+  document.getElementById("progress").style.width = progressPercent + "%";
+
+  // Таймер
+  startTimer();
   }
-  questions = pool.slice(0, totalQuestions);
-
-  showQuestion();
-    }
 
 function startTimer(){
   clearInterval(timer);
@@ -193,23 +204,7 @@ function startTimer(){
 
 
 
-function checkAnswer(index){
-  clearInterval(timer); // останавливаем таймер
-  const q = questions[currentQuestion];
-  const btn = document.getElementById(`opt${index}`);
-  const correctBtn = document.getElementById(`opt${q.c}`);
 
-  if(index === q.c){
-    btn.classList.add('answer-correct');
-    score++;
-  } else {
-    btn.classList.add('answer-wrong');
-    correctBtn.classList.add('answer-correct');
-  }
-
-  // Показываем кнопку Next
-  document.getElementById("nextBtn").style.display = "block";
-  }
 
 function showResult(){
   document.getElementById("app").innerHTML=`
@@ -237,7 +232,23 @@ function restartQuiz(){
     const btn = document.getElementById(`opt${i}`);
     btn.textContent = opt;
     btn.onclick = () => checkAnswer(i);
-    btn.className = ""; // сброс стиля
+    btn.clfunction checkAnswer(index){
+  clearInterval(timer);
+  const q = questions[currentQuestion];
+  const btn = document.getElementById(`opt${index}`);
+  const correctBtn = document.getElementById(`opt${q.c}`);
+
+  if(index === q.c){
+    btn.classList.add('answer-correct');
+    score++;
+  } else {
+    btn.classList.add('answer-wrong');
+    correctBtn.classList.add('answer-correct');
+  }
+
+  // Показываем кнопку Next
+  document.getElementById("nextBtn").style.display = "block";
+    }assName = ""; // сброс стиля
   });
 
   // Скрываем кнопку Next до ответа
