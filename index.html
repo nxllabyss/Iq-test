@@ -131,53 +131,59 @@ hard:[
 };
 
 function selectLevel(lvl){
-level=lvl;
-document.getElementById("app").innerHTML=`
-<h2>Savol sonini tanlang</h2>
-<button onclick="startQuiz(10)">10</button>
-<button onclick="startQuiz(20)">20</button>
-<button onclick="startQuiz(30)">30</button>
-`;
+  level = lvl;
+  document.getElementById("app").innerHTML = `
+    <h2>Savol sonini tanlang</h2>
+    <button onclick="chooseQuestionCount(10)">10 Savol</button>
+    <button onclick="chooseQuestionCount(20)">20 Savol</button>
+    <button onclick="chooseQuestionCount(30)">30 Savol</button>
+  `;
 }
 
-function startQuiz(num){
+function chooseQuestionCount(num){
   totalQuestions = num;
+  document.getElementById("app").innerHTML = `
+    <h2>Vaqtni tanlang</h2>
+    <button onclick="startQuizWithTimer(15)">15 sekund</button>
+    <button onclick="startQuizWithTimer(30)">30 sekund</button>
+    <button onclick="startQuizWithTimer(45)">45 sekund</button>
+    <button onclick="startQuizWithTimer(60)">60 sekund</button>
+  `;
+}
+
+function startQuizWithTimer(time){
+  perQuestionTime = time;
   currentQuestion = 0;
   score = 0;
-  
-  // создаём копию массива вопросов выбранного уровня
+
+  // уникальные вопросы без повторов
   const pool = [...questionBank[level]];
-  
-  // перемешиваем массив (Fisher-Yates shuffle)
   for(let i = pool.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  
-  // берём первые N вопросов
-  questions = pool.slice(0, num);
-  
+  questions = pool.slice(0, totalQuestions);
+
   showQuestion();
-  }
+    }
 
 function startTimer(){
-  clearInterval(timer); // останавливаем старый таймер, если есть
-  timeLeft = 60;
+  clearInterval(timer);
+  timeLeft = perQuestionTime;
   const display = document.getElementById("timer");
   display.textContent = `Vaqt: ${timeLeft}s`;
 
-  const start = Date.now(); // точное время старта
+  const start = Date.now();
   timer = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - start) / 1000); // сколько секунд прошло
-    const remaining = 60 - elapsed;
+    const elapsed = Math.floor((Date.now() - start) / 1000);
+    const remaining = perQuestionTime - elapsed;
     display.textContent = `Vaqt: ${remaining}s`;
-
     if(remaining <= 0){
       clearInterval(timer);
       nextQuestion();
     }
-  }, 200); // обновляем каждые 0.2 сек для плавности
-}
+  }, 200);
+  }
 
 function showQuestion(){
 if(currentQuestion>=totalQuestions){ showResult(); return; }
